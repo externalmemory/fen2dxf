@@ -167,6 +167,32 @@ it. "Start position" is one click away.
 Nothing enforces chess rules. Nine pawns, no kings and a pawn on the first rank are all fine —
 this draws pictures, it does not referee games.
 
+## Deploying
+
+Cloudflare now offers static sites through **Workers with static assets** rather than Pages, so
+`wrangler.jsonc` is what the dashboard's Git flow expects. There is no Worker script: `assets`
+with no `main` serves the built directory from the edge.
+
+Connecting the repo, set **build command** `npm run build` and **deploy command**
+`npx wrangler deploy`. There is no output-directory field in that flow — `wrangler.jsonc` says
+`./dist`. Or deploy without connecting a repo:
+
+```
+npx wrangler login
+npx wrangler pages deploy dist --project-name fen2dxf   # Pages
+npx wrangler deploy                                     # Workers
+```
+
+Two files exist only for this:
+
+- **`.node-version`** pins Node 22. Vite 8 needs 20.19+, and the build image picks its own
+  default otherwise.
+- **`public/_headers`** caches `/assets/*` for a year — Vite fingerprints those names, so the
+  name changes whenever the bytes do — and forces revalidation of `sw.js`, `index.html` and the
+  manifest. Cache the service worker and an installed copy can never learn a new version
+  exists, so the update silently never arrives. Verified working under Workers static assets,
+  which consumes `_headers` as config rather than serving it.
+
 ## Licence
 
 Application code is **MIT** (see `LICENSE`).

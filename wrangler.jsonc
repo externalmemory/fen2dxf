@@ -1,0 +1,11 @@
+{
+  // Cloudflare's "Workers with static assets" flow, which is what the dashboard offers now
+  // instead of Pages. There is no Worker script: `assets` with no `main` serves the built
+  // directory straight from the edge, so this file only has to say where the build landed.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fen2dxf",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}

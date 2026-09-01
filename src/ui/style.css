@@ -37,11 +37,6 @@ main {
   grid-template-columns: minmax(0, 1fr) 380px;
   grid-template-rows: minmax(0, 1fr);
 }
-@media (max-width: 900px) {
-  main { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: auto; }
-  .stage { min-height: 62vh; }
-}
-
 .stage-pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 18px; gap: 12px; }
 /* Explicit tracks for the same reason as `main`: an implicit auto row would size itself to
    the SVG's intrinsic 282mm and overflow instead of scaling the board down to fit. The
@@ -70,8 +65,33 @@ main {
 .report .msg.warn { border-color: #6b4a1e; background: #3a2a12; color: var(--warn); }
 .report .msg.note { background: var(--panel); }
 
+/* The narrow layout. It has to come AFTER the rules above rather than beside `main`: several
+   of them are being reversed, at the same specificity, so whichever is written last wins.
+   Written first, the `.stage` override silently lost to `min-height: 0` and the board came
+   out as a 90px thumbnail on any phone or tablet.
+
+   The wide layout pins everything to the viewport so the board scales down to fit and nothing
+   scrolls. Stacked, the content is simply taller than the screen and the page has to scroll
+   instead -- so the document goes back to `height: auto`, `main` stops being a flex item with
+   a capped height, and the controls give up their private scrollbar. Leaving `main` capped
+   does not clip, it compresses: `.stage-pane` keeps `min-height: 0`, which zeroes the
+   automatic minimum of its `auto` row, so the row is squeezed and the board and the report
+   spill over the controls instead. */
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  main {
+    grid-template-columns: 1fr; grid-template-rows: auto auto;
+    flex: none; overflow: visible;
+  }
+  /* `max-height: 100%` needs a definite track to resolve against, and there is none once
+     the page scrolls, so the board would grow to the full column width and run off the
+     bottom. Cap it against the viewport directly instead: whichever of the width or 70vh
+     runs out first. */
+  #svgwrap svg { max-height: 70vh; }
+  .controls { border-left: 0; border-top: 1px solid var(--line); overflow-y: visible; }
+}
+
 .controls { border-left: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 4px 0 40px; }
-@media (max-width: 900px) { .controls { border-left: 0; border-top: 1px solid var(--line); } }
 .group { padding: 14px 16px; border-bottom: 1px solid var(--line); }
 .group h2 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--dim); }
 
