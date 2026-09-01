@@ -29,6 +29,9 @@ Four sheets remove the problem instead: light squares, dark squares, white piece
 pieces, every shape solid, and a piece told from its square by the color of the vinyl it was
 cut from rather than by a gap.
 
+Light squares sheet may not be needed on light fabric. Similarly, dark squares sheet can be omitted 
+when the fabric is dark.
+
 ## No Stacking
 
 **Heat transfer vinyl bonds to fabric, not to itself.** Anything laid over another sheet simply
