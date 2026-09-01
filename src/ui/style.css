@@ -23,9 +23,12 @@ body {
 a { color: var(--accent); }
 
 .topbar {
-  display: flex; align-items: baseline; gap: 14px;
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
   padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--panel);
 }
+/* Pushed to the far end: most people arrive at the deployed page, not the repo. */
+.topbar .source { margin-left: auto; font-size: 13px; text-decoration: none; }
+.topbar .source:hover { text-decoration: underline; }
 .topbar h1 { margin: 0; font-size: 20px; letter-spacing: -0.02em; }
 .topbar h1 span { color: var(--accent); }
 .tagline { margin: 0; color: var(--dim); font-size: 13px; }
@@ -77,6 +80,7 @@ main {
    does not clip, it compresses: `.stage-pane` keeps `min-height: 0`, which zeroes the
    automatic minimum of its `auto` row, so the row is squeezed and the board and the report
    spill over the controls instead. */
+@media (max-width: 560px) { .tagline { display: none; } }
 @media (max-width: 900px) {
   html, body { height: auto; }
   main {
