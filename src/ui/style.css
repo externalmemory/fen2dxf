@@ -139,7 +139,7 @@ button.primary { background: #2c4d80; border-color: #3f6ba9; }
 
 /* --- four-layer additions ------------------------------------------------ */
 
-/* Colour pickers. A fixed three-column grid so the fabric row, which has no checkbox,
+/* Color pickers. A fixed three-column grid so the fabric row, which has no checkbox,
    still lines its swatch up with the four that do. */
 .swatch {
   display: grid; grid-template-columns: 15px 42px 1fr; align-items: center;

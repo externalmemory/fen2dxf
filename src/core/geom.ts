@@ -23,7 +23,7 @@ export function ringLength(ring: Ring): number {
   return len;
 }
 
-/** Total length of every contour in the region — i.e. how far the blade travels cutting it. */
+/** Total length of every contour in the region: how far the blade travels cutting it. */
 export function cutLength(region: Region): number {
   let len = 0;
   for (const poly of region) {

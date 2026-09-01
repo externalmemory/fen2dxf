@@ -10,7 +10,7 @@ One geometry pipeline, two renderers. The SVG preview and the DXF writer consume
 
 ```
 src/core/
-  types.ts       Pt / Ring / Poly / Region -- millimetres, y up, holes explicit
+  types.ts       Pt / Ring / Poly / Region -- millimeters, y up, holes explicit
   geom.ts        areas, lengths, bounding boxes, affine maps (no boolean ops)
   clip.ts        the only file that knows about Clipper
   fen.ts         rule-free FEN parser
@@ -32,19 +32,19 @@ representation keeps components explicit instead of flattening to a soup of cont
 
 The one-sheet design had a structural flaw that no amount of tuning fixes. Writing C for the
 vinyl being cut and S for the surface behind it, a piece on a square is one of four cases, and
-the S-piece-on-S-square case has nothing to draw but an **outline** — a closed ring about a
-millimetre wide with nothing holding it. It cuts fine and then fails at the weeding table.
+the S-piece-on-S-square case has nothing to draw but an **outline**: a closed ring about a
+millimeter wide with nothing holding it. It cuts fine and then fails at the weeding table.
 
 Everything else in that design existed to service the other three cases: a clearance gap so a
 C-piece did not vanish into a C-square, a scrap filter for the flecks the gap detached, a ring
 thickness that had to be kept above the minimum feature width. All of it is gone. With four
-colours every shape is solid.
+colors every shape is solid.
 
 ## The sheets tile, they do not stack
 
 The first four-sheet version stacked: a solid light rectangle under everything, the dark sheet's
 grout lattice reaching into every light square, pieces simply laid on top. Overlap was the
-*point* — it meant a fraction of a millimetre of misregistration showed as overlap rather than
+*point*: it meant a fraction of a millimeter of misregistration showed as overlap rather than
 as a bare seam.
 
 That is right for adhesive vinyl and wrong for **heat transfer vinyl**, which bonds to fabric
@@ -52,7 +52,7 @@ and not to itself. A sheet laid over another sheet does not stick. So there is n
 anywhere, and the layout is a partition:
 
 ```
-tiles   = one colour's squares, shrunk by `groutInset`, bridged into one piece
+tiles   = one color's squares, shrunk by `groutInset`, bridged into one piece
 ground  = boardOuter - tiles          <- picks up the frame and the lattice for free
 light   = (ground or tiles) - knockout
 dark    = (tiles or ground) - knockout
@@ -68,9 +68,9 @@ zero butts exactly; negative overlaps, which is wrong here but correct for adhes
 the slider allows it.
 
 **Piece counters fall out of the knockout for free.** Dilating a region shrinks its holes, so
-the king's two eyes and the knight's one survive as islands of square colour, inset from the
+the king's two eyes and the knight's one survive as islands of square color, inset from the
 piece by exactly `gap`. That is what the drawing means, and it guarantees the counters contrast
-with the piece — a fabric-coloured eye would vanish on a white king on a white shirt. It also
+with the piece: a fabric-colored eye would vanish on a white king on a white shirt. It also
 forced `minScrapArea` down to 2 mm²: the knight's eye is 3.84 mm² and the king's are 39.52,
 so the old 4 mm² floor dropped his and kept theirs, which looks exactly like a bug.
 
@@ -88,12 +88,12 @@ With no overlap, only one square sheet can be the continuous ground; the other g
 left, which is 32 separate tiles. Bridging them diagonally makes that one decal, and it was
 briefly the default. It should not be, and the reason is not structural.
 
-Two squares of one colour meet at a corner at exactly zero width. So *any* connector between
-them, of any shape and any positive width, must intrude on the two squares of the other colour
-that meet at the same point — that was already in these notes as the reason a corner bridge
+Two squares of one color meet at a corner at exactly zero width. So *any* connector between
+them, of any shape and any positive width, must intrude on the two squares of the other color
+that meet at the same point. That was already in these notes as the reason a corner bridge
 "necessarily takes a matching bite out of the two substrate-colored squares", back when the bite
 was invisible under an overlapping sheet. Once the sheets tile, the bite is the finished
-artwork: a tile-coloured square sitting between the corners of two ground squares, at 31 of the
+artwork: a tile-colored square sitting between the corners of two ground squares, at 31 of the
 49 interior vertices, about as wide as the grout gap. A diagonal strip instead of an
 axis-aligned square shrinks the intrusion by roughly 5x in area but never removes it.
 
@@ -101,13 +101,13 @@ And the decal count it saves is worth less than it looks. The negative space you
 identical either way. The tiles being separate only matters if something has to hold them in
 register, and heat transfer vinyl arrives on a tacky carrier sheet that does precisely that.
 Interlock was solving a transfer-tape problem that this material does not have. It stays as an
-option because adhesive vinyl does have it — the same users who want a negative `gap`.
+option because adhesive vinyl does have it: the same users who want a negative `gap`.
 
 A test probes a disc at each of the 49 interior vertices and asserts the ground owns every one.
 
 ## When interlock is used, the bridges must form a tree
 
-Bridging works only if the bridges form a **spanning tree** — 31 of the 49 interior vertices.
+Bridging works only if the bridges form a **spanning tree**: 31 of the 49 interior vertices.
 
 The argument is topological. The two sheets are exact complements, so the ground is connected
 iff the tile sheet does not separate the rectangle. A tree is simply connected and does not
@@ -136,8 +136,8 @@ sheet so the number is never a surprise.
 
 ## Library choices
 
-**`clipper-lib`** (pure JS Clipper 6) behind a one-file adapter. Offsetting is not optional —
-grout, blade compensation, glyph repair and the whole minimum-feature check are offsets — which
+**`clipper-lib`** (pure JS Clipper 6) behind a one-file adapter. Offsetting is not optional (grout,
+blade compensation, glyph repair and the whole minimum-feature check are all offsets), which
 rules out boolean-only libraries such as `polygon-clipping`. The pure-JS port was preferred over
 a WASM build because the workload is tiny and an offline PWA does not need a `.wasm` in its
 precache. Swapping to Clipper2 later means rewriting `clip.ts` and nothing else.
@@ -149,44 +149,44 @@ precache. Swapping to Clipper2 later means rewriting `clip.ts` and nothing else.
 dark-squared bishops. A 60-line parser with no rules is the correct dependency.
 
 Integer scale is 1e4 (0.1 um). Design coordinates stay under ~310 mm, so integers stay under
-3.1e6 — far inside Clipper's safe range and far finer than any drag knife resolves.
+3.1e6, far inside Clipper's safe range and far finer than any drag knife resolves.
 
 ## Deriving the silhouettes
 
 The **Chess** font by James Kilfiger, public domain by its own copyright string. It draws each
 piece twice: `P N B R Q K` are outline forms and `p n b r q k` are solid. **Only the solid forms
-are used** — an outline form would cut as two hairline contours a fifth of a millimetre apart.
-Both piece colours come from the same silhouette and are told apart by the sheet they are cut
+are used**: an outline form would cut as two hairline contours a fifth of a millimeter apart.
+Both piece colors come from the same silhouette and are told apart by the sheet they are cut
 from, which is the entire point of a four-sheet build.
 
 All six glyphs share one transform, computed from the box that encloses every piece
 (102..898 x 0..760 font units), so their relative sizes are the ones the font was drawn with.
-Normalising each glyph on its own would make the pawn as tall as the king.
+Normalizing each glyph on its own would make the pawn as tall as the king.
 
 ### Four changes, all in `build-glyphs.ts`
 
 **The queen's crown balls** are four free-standing circles clearing the spike tips by about 27
 font units. A printed diagram bridges that gap with the outline stroke; a filled silhouette does
 not, so unrepaired the queen is a crown plus four loose 4 mm discs. Each is welded with a
-tapered stem — and the shape of that stem took three attempts:
+tapered stem, and the shape of that stem took three attempts:
 
 1. The convex hull of the disc and the nearest outline point tapers to nothing exactly where it
    meets a needle-sharp spike. The join is pinched to zero width.
 2. A trapezoid pushed a fixed distance past that point is wide enough in itself, but the spikes
-   stay under a millimetre for another 150 units below the tip, so the weld just moves the tear
+   stay under a millimeter for another 150 units below the tip, so the weld just moves the tear
    further down the spike. This one looked right and measured wrong: 1.0 mm, not the 2.3 mm the
    trapezoid's own width suggested.
 3. Anchor the far end in the spike's **erosion**. Eroding by half the stem width leaves exactly
    the material already at least that wide, so running the stem to the nearest point of *that*
    guarantees no cross-section anywhere between ball and crown is narrower than the stem.
 
-**The ball on the king's cross** is attached, but by a stem measuring 1.07 mm on a 33 mm square
-— three times narrower than the worst neck in any other piece, and under a millimetre as soon as
+**The ball on the king's cross** is attached, but by a stem measuring 1.07 mm on a 33 mm square,
+three times narrower than the worst neck in any other piece, and under a millimeter as soon as
 the squares drop below 31 mm, which is inside the slider's range. `thickenNecks` widens it.
 
 Finding it required separating necks from protrusions in the opening residue, which is mostly
 harmless: the sharp horns of every base crescent are thin but hang off solid material. A residue
-fragment is a neck iff it touches **two** components of the opening — and it has to be probed
+fragment is a neck iff it touches **two** components of the opening, and it has to be probed
 against the *opening*, not the eroded core, which sits another half-width further in and touches
 nothing. The dilation is then bisected rather than applied flat: this is somebody's drawing, and
 the right amount to change it is the least that works. It came out at 10.7 units.
@@ -197,12 +197,12 @@ change here that alters the drawing rather than making it cuttable.
 
 The ball is located rather than hard-coded, by the same trick the queen uses in reverse. It
 hangs off a stem far narrower than itself, so an erosion deep enough to pinch the stem through
-leaves the ball as a free-standing fragment — and it is the topmost one. Where to cut and how
+leaves the ball as a free-standing fragment, and it is the topmost one. Where to cut and how
 far to bury the new stem are both measured off that fragment.
 
 The arms are drawn at the full bar width rather than at the stem's original 30 units. Narrow
-arms would survive the cut perfectly well — an arm is a protrusion, attached along its whole
-root, not a neck, which is exactly the distinction `analyseThin` exists to make — but a 1.1 mm
+arms would survive the cut perfectly well (an arm is a protrusion, attached along its whole
+root, not a neck, which is exactly the distinction `analyzeThin` exists to make), but a 1.1 mm
 arm meeting a 1.8 mm stem looks like a mistake rather than a choice. The cross is also
 *stronger* than what it replaced, because its vertical bar runs deep inside the crown where the
 old stem was a stalk hanging off the top.
@@ -213,14 +213,14 @@ fits inside the glyph, so it rounds outside corners by exactly the radius and le
 ones alone. A fillet at a convex corner is the same circle, which is why a targeted
 corner-by-corner fillet would be more code for the same answer.
 
-Rounding a cusp necessarily shortens it — a fillet of radius r at a wedge cuts back
-r/tan(half-angle), which is a long way when the wedge is shallow — so the radius is small and
-the crescents lose about a millimetre end to end. Past about 22 units the pawn's mound stops
+Rounding a cusp necessarily shortens it: a fillet of radius r at a wedge cuts back
+r/tan(half-angle), which is a long way when the wedge is shallow. So the radius is small and
+the crescents lose about a millimeter end to end. Past about 22 units the pawn's mound stops
 being a crescent and becomes a lozenge. At 12 it removes every delicate-feature flag the
 checker used to raise on these glyphs, which is the tell that those flags were all cusps.
 
 One trap here: `clip.ts` rounds arcs to 0.02 of whatever unit it is handed and documents that
-as millimetres, but this script works in font units, where 0.02 is 0.0007 mm. The opening came
+as millimeters, but this script works in font units, where 0.02 is 0.0007 mm. The opening came
 back with a vertex every fraction of a degree and tripled the size of `glyphs.gen.ts`. The fix
 is to simplify afterwards to the chord error the rest of the app actually uses.
 
@@ -230,7 +230,7 @@ Result, at a 33 mm square and 0.86 piece scale, narrowest neck per piece:
 |---|---|---|---|---|---|
 | 3.15 mm | 4.18 mm | 4.18 mm | 4.18 mm | 4.18 mm | 2.58 mm |
 
-The king is still the binding constraint, but he reaches 1 mm at a 12.8 mm square — against
+The king is still the binding constraint, but he reaches 1 mm at a 12.8 mm square, against
 30.8 mm for the unrepaired stem, and 18.2 mm for the thickened one. Comfortably outside the
 useful range in every case, and at the shipped defaults no piece raises a flag of any kind.
 
@@ -239,7 +239,7 @@ useful range in every case, and at the shipped defaults no piece raises a flag o
 Font contours are resolved by a non-zero fill rule, and `union` cannot do that: it takes `Poly`
 values, where nesting is already decided, and forces every outer counter-clockwise. Handing it a
 glyph's contours as separate one-ring components reverses the holes and fills them in. The
-symptom was silent and specific — the king lost both eyes and the knight lost his. `clip.ts`
+symptom was silent and specific: the king lost both eyes and the knight lost his. `clip.ts`
 grew `fromRings` for anything that starts life as raw contours.
 
 ## Tuning, and what the numbers turned out to be
@@ -260,20 +260,20 @@ not 31. Both numbers are asserted.
 
 **`pieceScale` defaults to 0.86.** At 1.0 a piece is exactly as wide as its square, which is
 honest but leaves nothing of the square around it once the knockout has taken its `gap`. At
-0.86 the thinnest ring of square colour left around a piece is about 1.5 mm, on a tile square
+0.86 the thinnest ring of square color left around a piece is about 1.5 mm, on a tile square
 where the grout has already taken 0.6 mm. Push the scale much past 0.9 and the checker starts
 reporting severed tiles, which is the correct answer rather than a limit worth hard-coding.
 
 ## The bug worth remembering
 
-The minimum-feature check originally used a morphological opening with **mitred** joins, chosen
+The minimum-feature check originally used a morphological opening with **miterd** joins, chosen
 so that square corners came back exactly instead of being reported as defects. But erode-then-
-dilate with mitred joins is *exactly invertible* for any rectilinear shape. The grout lattice is
+dilate with miterd joins is *exactly invertible* for any rectilinear shape. The grout lattice is
 rectilinear, so the check reconstructed every connection it had just severed and reported a
 lattice cut into 32 pieces as perfectly sound.
 
 Connectivity is now judged on the **erosion** alone, which is the question actually being asked,
-and joins are round, which is what "opening" means — sweeping a disc through the shape. The
+and joins are round, which is what "opening" means: sweeping a disc through the shape. The
 convex-corner slivers that motivated mitring are about 0.05 mm², far below the 0.25 mm² noise
 floor, so they never mattered. There is a regression test.
 
@@ -286,6 +286,6 @@ floor, so they never mattered. There is a regression test.
 - **Coordinate labels** (a–h, 1–8). Every glyph is another loose decal, and the counters in
   `a b d e g o p q` make them fragile.
 - **Nesting several boards on one mat.**
-- **Letting the fabric be the light squares.** On a garment already the right colour, the light
+- **Letting the fabric be the light squares.** On a garment already the right color, the light
   sheet is redundant: three sheets, one less press, and 31 fewer bridges to weed. Not built
   because four sheets is what was asked for, but it is a two-line change to `compose`.

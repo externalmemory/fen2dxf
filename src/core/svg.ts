@@ -15,7 +15,7 @@ import type { Ring, Region } from './types.js';
 export type SvgLayer = { region: Region; fill: string; opacity?: number };
 
 export type SvgOptions = {
-  /** Design box in millimetres. */
+  /** Design box in millimeters. */
   x0: number;
   y0: number;
   x1: number;

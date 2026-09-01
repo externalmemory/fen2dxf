@@ -25,6 +25,14 @@ export const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0
  */
 export const DEFAULT_FEN = '1N6/8/K7/3k4/3p3B/p7/2PP4/8 w - - 0 1';
 
+/**
+ * Richard Reti, *Kagans Neueste Schachnachrichten* 1921. White to move and draw: the king
+ * looks hopelessly outside the square of the h-pawn and too far from his own, and draws by
+ * heading for both at once. 1.Kg7! h4 2.Kf6 Kb6 3.Ke5! Kxc6 4.Kf4 and the pawn is caught.
+ * Four men, which makes it the cheapest thing this app can cut.
+ */
+export const RETI_FEN = '7K/8/k1P5/7p/8/8/8/8 w - - 0 1';
+
 const TYPES = 'pnbrqk';
 
 export function idx(file: number, rank: number): number {

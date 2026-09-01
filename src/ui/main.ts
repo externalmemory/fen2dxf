@@ -1,6 +1,6 @@
 import './style.css';
 import {
-  DEFAULT_FEN, EMPTY_BOARD, START_FEN, idx, parseFen, squareName, toFen,
+  DEFAULT_FEN, EMPTY_BOARD, RETI_FEN, START_FEN, idx, parseFen, squareName, toFen,
   type Board, type Piece, type PieceColor, type PieceType,
 } from '../core/fen.js';
 import { compose, DEFAULTS, type Composition, type LayerId, type Settings } from '../core/compose.js';
@@ -46,7 +46,7 @@ function load(): State {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     if (!raw) return { ...DEFAULT_STATE };
-    // Only keep keys we still recognise, so an old blob cannot resurrect a dead setting.
+    // Only keep keys we still recognize, so an old blob cannot resurrect a dead setting.
     const saved = JSON.parse(raw) as Partial<State>;
     const out = { ...DEFAULT_STATE };
     for (const k of Object.keys(DEFAULT_STATE) as (keyof State)[]) {
@@ -76,22 +76,22 @@ type ColorCtrl = Base & { kind: 'color'; toggle?: keyof State };
 type Ctrl = NumCtrl | SegCtrl | ColorCtrl;
 
 const CONTROLS: Ctrl[] = [
-  { kind: 'color', group: 'grp-vinyl', key: 'colorFabric', label: 'Fabric', hint: 'The garment. Nothing is cut in this colour — it is what shows through the gap around every piece and anywhere the four sheets do not reach.' },
+  { kind: 'color', group: 'grp-vinyl', key: 'colorFabric', label: 'Fabric', hint: 'The garment. Nothing is cut in this color: it is what shows through the gap around every piece and anywhere the four sheets do not reach.' },
   { kind: 'color', group: 'grp-vinyl', key: 'colorLight', label: 'Light squares', toggle: 'showLight' },
   { kind: 'color', group: 'grp-vinyl', key: 'colorDark', label: 'Dark squares', toggle: 'showDark' },
   { kind: 'color', group: 'grp-vinyl', key: 'colorWhite', label: 'White pieces', toggle: 'showWhite' },
   { kind: 'color', group: 'grp-vinyl', key: 'colorBlack', label: 'Black pieces', toggle: 'showBlack' },
 
   { kind: 'num', group: 'grp-board', key: 'squareSize', label: 'Square size', min: 15, max: 40, step: 0.5, unit: 'mm' },
-  { kind: 'num', group: 'grp-board', key: 'frameWidth', label: 'Frame', min: 0, max: 15, step: 0.5, unit: 'mm', hint: 'A border in the dark colour, around the board. It also welds the edge squares to something solid.' },
+  { kind: 'num', group: 'grp-board', key: 'frameWidth', label: 'Frame', min: 0, max: 15, step: 0.5, unit: 'mm', hint: 'A border in the dark color, around the board. It also welds the edge squares to something solid.' },
   { kind: 'seg', group: 'grp-board', key: 'ground', label: 'Continuous sheet', options: [['dark', 'Dark'], ['light', 'Light']],
-    hint: 'The colour that carries the frame, the lattice and its own squares as one decal. The other colour gets exactly what is left over — the two sheets tile, they never overlap.' },
+    hint: 'The color that carries the frame, the lattice and its own squares as one decal. The other color gets exactly what is left over: the two sheets tile, they never overlap.' },
   { kind: 'seg', group: 'grp-board', key: 'connect', label: 'Square joins', options: [['grout', 'Grout'], ['interlock', 'Interlock'], ['none', 'Butt']],
-    hint: 'Grout shrinks the tile colour’s squares so the other colour forms one continuous sheet; the tiles stay separate, which costs nothing on HTV because the carrier sheet holds them. Interlock also bridges the tiles diagonally into one decal, but a bridge has to intrude on the corners of the two squares it passes between, so it shows as a tile-coloured square at 31 of the corners. Butt meets the squares edge to edge with no gap, which leaves both sheets relying on zero-width corner contacts.' },
+    hint: 'Grout shrinks the squares of the tile color so the other color forms one continuous sheet; the tiles stay separate, which costs nothing on HTV because the carrier sheet holds them. Interlock also bridges the tiles diagonally into one decal, but a bridge has to intrude on the corners of the two squares it passes between, so it shows as a tile-colored square at 31 of the corners. Butt meets the squares edge to edge with no gap, which leaves both sheets relying on zero-width corner contacts.' },
   { kind: 'num', group: 'grp-board', key: 'groutInset', label: 'Grout width', min: 0.2, max: 2, step: 0.05, unit: 'mm', when: () => state.connect !== 'none',
-    hint: 'How far the other colour’s squares are shrunk. The continuous sheet’s narrowest point is 2·√2 times this, at the corner junctions.' },
+    hint: 'How far the squares of the other color are shrunk. The narrowest point of the continuous sheet is 2·√2 times this, at the corner junctions.' },
   { kind: 'num', group: 'grp-board', key: 'bridgeWidth', label: 'Bridge width', min: 1.5, max: 6, step: 0.1, unit: 'mm', when: () => state.connect === 'interlock',
-    hint: 'The bridged sheet’s narrowest point is √2·(half this − the grout width), so the two settings pull against each other. Bridges never weaken the continuous sheet: only the 18 unbridged corners set its minimum. Half this is also how far each bridge intrudes into the corner of a square of the other colour.' },
+    hint: 'The narrowest point of the bridged sheet is √2·(half this − the grout width), so the two settings pull against each other. Bridges never weaken the continuous sheet: only the 18 unbridged corners set its minimum. Half this is also how far each bridge intrudes into the corner of a square of the other color.' },
   { kind: 'num', group: 'grp-board', key: 'gap', label: 'Gap around pieces', min: -0.5, max: 2, step: 0.05, unit: 'mm',
     hint: 'How far the square sheets are cut back from every piece. Heat transfer vinyl will not stick to itself, so this must not go below zero unless you are using adhesive vinyl, where a small overlap is the safer choice.' },
   { kind: 'num', group: 'grp-board', key: 'pieceScale', label: 'Piece size', min: 0.5, max: 1, step: 0.01, unit: 'x',
@@ -101,14 +101,14 @@ const CONTROLS: Ctrl[] = [
     hint: 'Anything narrower is highlighted in the preview.' },
   { kind: 'num', group: 'grp-cut', key: 'matMm', label: 'Usable cut area', min: 150, max: 320, step: 0.1, unit: 'mm' },
   { kind: 'num', group: 'grp-cut', key: 'weedMargin', label: 'Weeding box margin', min: 0, max: 25, step: 1, unit: 'mm',
-    hint: 'A rectangle cut outside the artwork on every sheet, so the waste peels off in one pull — and so the four sheets have a shared edge to line up against. 0 turns it off.' },
+    hint: 'A rectangle cut outside the artwork on every sheet, so the waste peels off in one pull, and so the four sheets have a shared edge to line up against. 0 turns it off.' },
   { kind: 'num', group: 'grp-cut', key: 'minScrapArea', label: 'Discard fragments under', min: 0, max: 60, step: 1, unit: 'mm²',
     hint: 'Drops detached flecks too small to be worth positioning by hand.' },
   { kind: 'num', group: 'grp-cut', key: 'minHoleArea', label: 'Fill holes under', min: 0, max: 5, step: 0.1, unit: 'mm²' },
   { kind: 'num', group: 'grp-cut', key: 'grow', label: 'Blade compensation', min: -0.3, max: 0.3, step: 0.01, unit: 'mm',
     hint: 'Grows or shrinks every contour, to correct a blade that consistently over- or under-cuts.' },
   { kind: 'seg', group: 'grp-cut', key: 'cutLines', label: 'Draw as', options: [['false', 'Finished vinyl'], ['true', 'Cut lines']] },
-  { kind: 'seg', group: 'grp-cut', key: 'lwpolyline', label: 'DXF flavour', options: [['false', 'R12 polyline'], ['true', 'R2000 lwpolyline']],
+  { kind: 'seg', group: 'grp-cut', key: 'lwpolyline', label: 'DXF flavor', options: [['false', 'R12 polyline'], ['true', 'R2000 lwpolyline']],
     hint: 'R12 is the safer choice and the one verified against the reference file.' },
 ];
 
@@ -372,7 +372,7 @@ function buildExports(c: Composition, r: Report): void {
 
   items.push({
     label: 'Preview SVG',
-    sub: 'all four sheets, in colour',
+    sub: 'all four sheets, in color',
     name: `chess-preview-${stamp}.svg`,
     text: toSvg({ ...c.box, background: state.colorFabric, layers: c.layers.map((l) => ({ region: l.region, fill: l.color })), outlineRings: extraRings }),
     type: 'image/svg+xml',
@@ -435,6 +435,7 @@ function init(): void {
     if (res.ok) setBoard(res.board);
   };
   el('btn-study').addEventListener('click', () => setFen(DEFAULT_FEN));
+  el('btn-reti').addEventListener('click', () => setFen(RETI_FEN));
   el('btn-start').addEventListener('click', () => setFen(START_FEN));
   el('btn-clear').addEventListener('click', () => setBoard(EMPTY_BOARD));
   el('btn-flip').addEventListener('click', () => {

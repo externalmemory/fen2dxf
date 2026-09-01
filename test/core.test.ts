@@ -4,7 +4,7 @@ import { difference, intersect, offset, open, union } from '../src/core/clip.js'
 import { bbox, cutLength, rect, regionArea, signedArea, transformRegion } from '../src/core/geom.js';
 import { boardOuter, cornerBridges, frameRing, groutedBoard, insetSquares, makeLayout, squaresOfColor } from '../src/core/board.js';
 import { DEFAULTS, LAYER_IDS, compose, dropScraps, placeGlyph, type Composition, type LayerId, type Settings } from '../src/core/compose.js';
-import { analyseThin, validate } from '../src/core/validate.js';
+import { analyzeThin, validate } from '../src/core/validate.js';
 import { calibrationSquareDxf, toDxf } from '../src/core/dxf.js';
 import { SILHOUETTES } from '../src/core/glyphs.gen.js';
 
@@ -128,17 +128,17 @@ describe('board', () => {
     for (const inset of [0.4, 0.5, 0.6]) {
       const g = groutedBoard(L, false, inset);
       const narrowest = 2 * Math.SQRT2 * inset;
-      expect(analyseThin(g, narrowest * 0.9).necks, `inset ${inset} below`).toBe(0);
+      expect(analyzeThin(g, narrowest * 0.9).necks, `inset ${inset} below`).toBe(0);
       // Severing every junction leaves the 32 squares loose: 31 splits.
-      expect(analyseThin(g, narrowest * 1.15).necks, `inset ${inset} above`).toBe(31);
+      expect(analyzeThin(g, narrowest * 1.15).necks, `inset ${inset} above`).toBe(31);
     }
   });
 
-  it('detects a severed rectilinear lattice, which a mitred opening would hide', () => {
-    // Regression: erode-then-dilate with mitred joins is exactly invertible on rectilinear
+  it('detects a severed rectilinear lattice, which a miterd opening would hide', () => {
+    // Regression: erode-then-dilate with miterd joins is exactly invertible on rectilinear
     // shapes, so an opening-based check reconstructs the cut and reports it as sound.
     const g = groutedBoard(L, false, 0.3);
-    expect(analyseThin(g, 1.5).necks).toBe(31);
+    expect(analyzeThin(g, 1.5).necks).toBe(31);
   });
 
   it('joins all 32 squares with bridges, and needs exactly 31 to do it', () => {
@@ -174,7 +174,7 @@ describe('compose', () => {
     expect(sheet(c, 'black')).toHaveLength(0);
   });
 
-  it('never puts tile colour where two ground squares meet at a corner', () => {
+  it('never puts tile color where two ground squares meet at a corner', () => {
     // The complaint interlock earns and grout does not. Probe a small disc at each of the 49
     // interior vertices: under grout the ground owns every one of them outright.
     const c = compose(EMPTY_BOARD, settings());
@@ -223,7 +223,7 @@ describe('compose', () => {
     expect(regionArea(intersect(grown, squares))).toBeCloseTo(0, 6);
   });
 
-  it('splits the pieces by colour, not by the square they stand on', () => {
+  it('splits the pieces by color, not by the square they stand on', () => {
     const c = compose(START, settings());
     // Every piece type contributes the same silhouette to both piece sheets, so the two
     // are congruent: 8 pawns at 3 decals, 2 knights and 2 bishops at 2, 2 rooks at 3,
@@ -234,14 +234,14 @@ describe('compose', () => {
     expect(regionArea(sheet(c, 'white'))).toBeCloseTo(regionArea(sheet(c, 'black')), 4);
   });
 
-  it('swaps which colour is the continuous sheet without changing the total', () => {
+  it('swaps which color is the continuous sheet without changing the total', () => {
     const dark = compose(EMPTY_BOARD, settings({ ground: 'dark' }));
     const light = compose(EMPTY_BOARD, settings({ ground: 'light' }));
     expect(regionArea(sheet(dark, 'dark'))).toBeCloseTo(regionArea(sheet(light, 'light')), 4);
     expect(regionArea(sheet(dark, 'light'))).toBeCloseTo(regionArea(sheet(light, 'dark')), 4);
   });
 
-  it('keeps the counters inside a piece as islands of square colour', () => {
+  it('keeps the counters inside a piece as islands of square color', () => {
     // The king's two eyes and the knight's one are holes in the glyph, so the knockout leaves
     // the square showing through them. The knight's is only 3.8 mm2, which is why
     // minScrapArea has to stay below it -- dropping his and keeping the king's looks like a
@@ -291,7 +291,7 @@ describe('compose', () => {
 
   it('keeps the queen\'s crown balls welded to their spikes', () => {
     // The font draws them as four free-standing circles clearing the spike tips by about a
-    // millimetre. Unrepaired that is a crown plus four loose discs; repaired it is two.
+    // millimeter. Unrepaired that is a crown plus four loose discs; repaired it is two.
     expect(SILHOUETTES.q).toHaveLength(2);
   });
 
@@ -314,7 +314,7 @@ describe('interlock', () => {
     let lo = 0.05, hi = 8;
     for (let i = 0; i < 22; i++) {
       const mid = (lo + hi) / 2;
-      const a = analyseThin(r, mid);
+      const a = analyzeThin(r, mid);
       if (a.necks || a.vanishing) hi = mid; else lo = mid;
     }
     return lo;
@@ -355,19 +355,19 @@ describe('interlock', () => {
 
 describe('validate', () => {
   it('calls a thin bar a vanishing component, not a neck', () => {
-    const a = analyseThin(rect(0, 0, 30, 0.5), 1);
+    const a = analyzeThin(rect(0, 0, 30, 0.5), 1);
     expect(a.vanishing).toBe(1);
     expect(a.necks).toBe(0);
   });
 
   it('calls a pinched dumbbell a neck', () => {
-    const a = analyseThin(union(rect(0, 0, 10, 10), rect(10, 4.7, 12, 5.3), rect(12, 0, 22, 10)), 1);
+    const a = analyzeThin(union(rect(0, 0, 10, 10), rect(10, 4.7, 12, 5.3), rect(12, 0, 22, 10)), 1);
     expect(a.necks).toBe(1);
   });
 
   it('does not report a thin protrusion attached to bulk material', () => {
     // A tab sticking out of a solid block is thin, but nothing breaks if it tears.
-    const a = analyseThin(union(rect(0, 0, 20, 20), rect(20, 9.7, 24, 10.3)), 1);
+    const a = analyzeThin(union(rect(0, 0, 20, 20), rect(20, 9.7, 24, 10.3)), 1);
     expect(a.necks).toBe(0);
     expect(a.vanishing).toBe(0);
   });
@@ -401,7 +401,7 @@ describe('validate', () => {
 
   it('costs 31 decals to keep the corners of the ground clean', () => {
     // Interlock is one decal on the tile sheet instead of 32, and the whole price is that a
-    // bridge shows as a tile-coloured square between the corners of two ground squares.
+    // bridge shows as a tile-colored square between the corners of two ground squares.
     const grout = validate(compose(KUBBEL, DEFAULTS), 1, 292.1);
     const inter = validate(compose(KUBBEL, { ...DEFAULTS, connect: 'interlock' }), 1, 292.1);
     expect(grout.layers[0]!.decals - inter.layers[0]!.decals).toBe(31);
@@ -424,7 +424,7 @@ describe('validate', () => {
   it('keeps every glyph free of necks at the default square size', () => {
     const L = makeLayout(DEFAULTS.squareSize, 0);
     for (const type of Object.keys(SILHOUETTES) as (keyof typeof SILHOUETTES)[]) {
-      const a = analyseThin(placeGlyph(L, type, 0, 0, DEFAULTS.pieceScale), 1);
+      const a = analyzeThin(placeGlyph(L, type, 0, 0, DEFAULTS.pieceScale), 1);
       expect(a.necks, type).toBe(0);
       expect(a.vanishing, type).toBe(0);
     }
@@ -474,7 +474,7 @@ describe('dxf', () => {
     const dxf = calibrationSquareDxf(100);
     expect(dxf).toContain('0\nSECTION\n2\nHEADER\n');
     expect(dxf).toContain('$ACADVER\n1\nAC1009\n');
-    expect(dxf).toContain('$INSUNITS\n70\n4\n'); // millimetres
+    expect(dxf).toContain('$INSUNITS\n70\n4\n'); // millimeters
     expect(dxf).toContain('$MEASUREMENT\n70\n1\n');
     expect(dxf).toContain('0\nTABLE\n2\nLAYER\n');
     expect(dxf).toContain('0\nLAYER\n2\n0\n');

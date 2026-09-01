@@ -2,18 +2,18 @@
  * Checks that matter before you waste a sheet of vinyl.
  *
  * The one that counts is minimum feature width. Nothing upstream stops the knight's muzzle
- * notch or the king's cross coming out at a third of a millimetre, and material that narrow
+ * notch or the king's cross coming out at a third of a millimeter, and material that narrow
  * tears while it is being weeded rather than failing loudly at cut time.
  *
  * Connectivity is judged on the EROSION alone, never on the opening. Eroding by half the
  * minimum width pinches through anything narrower and splits the component, which is exactly
- * the question being asked. Dilating back would undo that: for a rectilinear shape a mitred
+ * the question being asked. Dilating back would undo that: for a rectilinear shape a miterd
  * round trip is exactly invertible, and even with round joins two pieces that were eroded
  * apart are dilated back until they touch again and merge. The opening is used only to
  * decide which material to highlight, not to decide whether anything is broken.
  *
  * But thin material is not automatically a problem, and this is the distinction the report
- * turns on. A corner bridge pokes two small tips into the neighbouring squares; those tips
+ * turns on. A corner bridge pokes two small tips into the neighboring squares; those tips
  * are thin, yet they are attached to the bulk and will never tear. What actually ruins a cut
  * is a thin NECK -- material whose failure splits one decal into two -- or a whole decal
  * thinner than the threshold, which lifts with the waste. So the opening is compared
@@ -65,7 +65,7 @@ const areaOf = (p: Poly): number =>
 
 export type ThinAnalysis = { thin: Region; necks: number; vanishing: number };
 
-export function analyseThin(region: Region, minFeature: number): ThinAnalysis {
+export function analyzeThin(region: Region, minFeature: number): ThinAnalysis {
   if (minFeature <= 0 || !region.length) return { thin: [], necks: 0, vanishing: 0 };
 
   // Slivers below a quarter of a minimum-width square are offsetting noise -- chiefly the
@@ -91,7 +91,7 @@ export function validate(c: Composition, minFeature: number, matMm: number): Rep
   const heightMm = c.box.y1 - c.box.y0;
 
   const layers: LayerReport[] = c.layers.map((l) => {
-    const { thin, necks, vanishing } = analyseThin(l.region, minFeature);
+    const { thin, necks, vanishing } = analyzeThin(l.region, minFeature);
     return {
       id: l.id,
       name: l.name,

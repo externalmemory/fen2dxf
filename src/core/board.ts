@@ -2,7 +2,7 @@
  * Board geometry: squares, the connectivity treatment that stops them falling apart,
  * the frame, and the weeding box. No pieces here.
  *
- * Design coordinates are millimetres with y up and the origin at the bottom-left of the
+ * Design coordinates are millimeters with y up and the origin at the bottom-left of the
  * outermost edge of the frame, so nothing in the output is ever negative except the
  * weeding box, which deliberately sits outside everything.
  */
@@ -77,7 +77,7 @@ export function groutedBoard(L: Layout, cutIsLight: boolean, inset: number): Reg
 }
 
 /**
- * Corner bridges: a small square centred on an interior lattice vertex, joining the two
+ * Corner bridges: a small square centered on an interior lattice vertex, joining the two
  * cut-colored squares that meet there diagonally. It necessarily takes a matching bite out
  * of the two substrate-colored squares -- any connected path from one diagonal quadrant to
  * the other has to pass through the others, and a zero-width path cannot be cut.

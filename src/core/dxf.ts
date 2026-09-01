@@ -15,7 +15,7 @@
  *   - Closed POLYLINE (66=1 vertices-follow, 70=1 closed) + VERTEX + SEQEND.
  *   - No SPLINE, ELLIPSE, ARC, BLOCK or INSERT. Every curve is flattened before it gets here.
  *
- * Coordinates are millimetres with y up, which is already how `Region` is defined.
+ * Coordinates are millimeters with y up, which is already how `Region` is defined.
  */
 import type { Ring, Region } from './types.js';
 import { bbox, boxUnion, isEmptyBox, rings } from './geom.js';

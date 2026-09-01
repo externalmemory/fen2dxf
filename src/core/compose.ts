@@ -5,7 +5,7 @@
  * --------
  * A one-sheet build has to distinguish four things with two colors, and one of the four
  * combinations has nowhere to go: a piece the same color as the square it stands on can only
- * be drawn as an outline. On vinyl an outline is a closed ring a millimetre or so wide with
+ * be drawn as an outline. On vinyl an outline is a closed ring a millimeter or so wide with
  * nothing holding it, and it will not survive weeding or transfer. Four sheets remove the
  * problem rather than working around it -- every shape on every sheet is solid, and a piece
  * is told from its square by the color of the vinyl it was cut from, not by a gap.
@@ -19,7 +19,7 @@
  * ---------------------------------------
  * Heat transfer vinyl bonds to fabric and not to itself, so anything laid over another sheet
  * simply does not stick. There is no free overlap to hide registration error in, and every
- * square millimetre of the design belongs to exactly one sheet:
+ * square millimeter of the design belongs to exactly one sheet:
  *
  *   - the piece sheets are cut as drawn, and the outline of every piece is knocked back out
  *     of whichever square sheet it stands on, `gap` wider all round;
@@ -54,15 +54,15 @@ export type Settings = {
   squareSize: number;
   frameWidth: number;
   /**
-   * Which colour is the continuous ground: the sheet that carries the frame, the grout
-   * lattice and its own squares as a single decal. The other colour gets what is left.
+   * Which color is the continuous ground: the sheet that carries the frame, the grout
+   * lattice and its own squares as a single decal. The other color gets what is left.
    */
   ground: 'dark' | 'light';
   /**
-   * `grout` shrinks the tile colour's squares so the ground becomes one piece; the tiles stay
+   * `grout` shrinks the tile color's squares so the ground becomes one piece; the tiles stay
    * 32 separate decals, which is the right trade on HTV -- see `tileSheet`. `interlock` also
    * bridges the tiles diagonally so both sheets come off as one decal, at a visible cost.
-   * `none` leaves both colours as exact squares meeting edge to edge.
+   * `none` leaves both colors as exact squares meeting edge to edge.
    */
   connect: Connect;
   groutInset: number;
@@ -83,14 +83,14 @@ export type Settings = {
   /**
    * Discard disconnected fragments below this area, in mm^2. Keep it under 3: the counters
    * the font draws inside a piece -- the king's two eyes, the knight's one -- survive the
-   * knockout as islands of square colour, and the knight's is only 3.8 mm^2. Dropping his
+   * knockout as islands of square color, and the knight's is only 3.8 mm^2. Dropping his
    * and keeping the king's 39.5 mm^2 ones looks like a bug, because it is one.
    */
   minScrapArea: number;
-  /** Fill holes below this area, in mm^2. A sub-millimetre hole cannot be weeded out anyway. */
+  /** Fill holes below this area, in mm^2. A sub-millimeter hole cannot be weeded out anyway. */
   minHoleArea: number;
   flipped: boolean;
-  /** Preview only -- a DXF carries no colour. `colorFabric` shows through every gap. */
+  /** Preview only -- a DXF carries no color. `colorFabric` shows through every gap. */
   colorFabric: string;
   colorLight: string;
   colorDark: string;
@@ -123,7 +123,7 @@ export const DEFAULTS: Settings = {
 export type Layer = {
   id: LayerId;
   name: string;
-  /** Preview colour. Not written to the DXF, which has no notion of one. */
+  /** Preview color. Not written to the DXF, which has no notion of one. */
   color: string;
   region: Region;
   scrapsDropped: number;
@@ -188,10 +188,10 @@ export function dropScraps(region: Region, minArea: number, minHoleArea: number)
  * Why 32 loose tiles is the default, and interlock is not
  * ------------------------------------------------------
  * `interlock` bridges the tiles diagonally so they come off as a single decal instead, which
- * sounds strictly better and is not. Two squares of one colour meet at a corner at exactly
+ * sounds strictly better and is not. Two squares of one color meet at a corner at exactly
  * zero width, so ANY connector between them of any positive width has to intrude into the
- * two squares of the other colour that meet at the same point. The bridge is therefore
- * visible as a tile-coloured square sitting between the corners of two ground squares, at 31
+ * two squares of the other color that meet at the same point. The bridge is therefore
+ * visible as a tile-colored square sitting between the corners of two ground squares, at 31
  * of the 49 interior vertices. There is no shape that avoids this -- a diagonal strip makes
  * the intrusion smaller but never removes it.
  *

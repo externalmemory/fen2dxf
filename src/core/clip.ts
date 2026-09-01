@@ -1,7 +1,7 @@
 /**
  * The only file that knows about Clipper.
  *
- * Everything downstream works in millimetres on `Region`; this module converts to Clipper's
+ * Everything downstream works in millimeters on `Region`; this module converts to Clipper's
  * integer coordinates and back. Swapping in Clipper2/WASM later means rewriting this file only.
  *
  * Scale is 1e4, i.e. 0.1 um. Design coordinates stay under ~310 mm, so integers stay under
@@ -75,7 +75,7 @@ function execute(clipType: number, subject: Paths, clip: Paths): Region {
   return fromPolyTree(tree);
 }
 
-/** Union of any number of regions. Also the canonical way to normalise one region. */
+/** Union of any number of regions. Also the canonical way to normalize one region. */
 export function union(...regions: Region[]): Region {
   const paths: Paths = [];
   for (const r of regions) paths.push(...toPaths(r));
@@ -132,7 +132,7 @@ export function offset(region: Region, deltaMm: number, join: JoinStyle = Join.r
  * Morphological opening: erode then dilate. Removes anything thinner than 2*radius.
  *
  * Round joins are not a stylistic choice here -- they are the definition. Opening means
- * sweeping a disc through the shape, and only a round join approximates a disc. Mitred joins
+ * sweeping a disc through the shape, and only a round join approximates a disc. Miterd joins
  * make the round trip *exactly invertible* for any rectilinear shape, so an opening built
  * from them reconstructs whatever it just removed and reports that nothing is thin.
  */

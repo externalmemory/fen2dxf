@@ -7,7 +7,7 @@
  * The font draws each piece twice: uppercase P N B R Q K are the *outline* forms used for
  * white on a printed diagram, and lowercase p n b r q k are the *solid* forms used for
  * black. Only the solid forms are useful here. A vinyl cutter has no notion of fill, so an
- * outline form would come out as two hairline contours a fifth of a millimetre apart --
+ * outline form would come out as two hairline contours a fifth of a millimeter apart --
  * unweedable. Both piece colors are therefore cut from the same solid silhouette and told
  * apart by the color of the sheet they are cut from, which is the entire point of a
  * four-layer build.
@@ -15,7 +15,7 @@
  * The one repair
  * --------------
  * In the solid queen the four crown balls are drawn as free-standing circles that clear the
- * spike tips by about 27 units, roughly a millimetre once a square is 33 mm. On a printed
+ * spike tips by about 27 units, roughly a millimeter once a square is 33 mm. On a printed
  * diagram the outline stroke bridges that gap; in a filled silhouette nothing does, so the
  * balls come out as four loose discs to be tweezered into place. `bridgeBalls` widens each
  * spike into a tapered stem that meets its ball, which is both what the drawing means and
@@ -26,9 +26,9 @@ import opentype, { type Font } from 'opentype.js';
 import type { Pt, Ring, Region } from '../src/core/types.js';
 import { clean, difference, fromRings, intersect, offset, open, union } from '../src/core/clip.js';
 import { bbox, rect, regionArea, signedArea, transformRegion } from '../src/core/geom.js';
-import { analyseThin } from '../src/core/validate.js';
+import { analyzeThin } from '../src/core/validate.js';
 
-/** The design box the app scales into a square. Glyphs are normalised to fill it exactly. */
+/** The design box the app scales into a square. Glyphs are normalized to fill it exactly. */
 const BOX = 1000;
 /** Chord tolerance for flattening the CFF curves, in font units (1000/em). */
 const FLATTEN_TOL = 0.25;
@@ -41,7 +41,7 @@ const STEM_WIDTH = 50;
  *
  * The base crescent of every piece, and the pawn's mound and the rook's band, end in cusps
  * that come to a literal point. Two things are wrong with a point. It is the thinnest feature
- * a shape can have, so on HTV the last fraction of a millimetre has almost no area to bond
+ * a shape can have, so on HTV the last fraction of a millimeter has almost no area to bond
  * with and can lift; and a drag knife cannot cut one anyway, because the blade trails the
  * pivot and swivels through the reversal, rounding the corner by roughly the blade offset.
  * Designing the radius means the file says what the machine was going to do regardless.
@@ -167,7 +167,7 @@ function nearestOnRing(ring: Ring, p: Pt): { pt: Pt; d2: number } {
  *   - the convex hull of the disc and the nearest outline point tapers to nothing exactly
  *     where it meets a needle-sharp spike, so the join is pinched to zero width;
  *   - a trapezoid pushed a fixed distance past that point is wide enough in itself, but the
- *     queen's spikes stay under a millimetre for another 150 units below the tip, so the
+ *     queen's spikes stay under a millimeter for another 150 units below the tip, so the
  *     weld simply moves the tear a little further down the spike.
  *
  * Eroding the target by half the stem width answers the question directly: what is left is
@@ -267,7 +267,7 @@ function crossTheKing(comps: Region, bar: number): Region {
   // two lobes are hundreds of units away on either side.
   const cut = rect(b.x0 - 1.5 * e, bottom, b.x1 + 1.5 * e, top + e);
 
-  const armY = top - 1.6 * bar; // a Latin cross: the bar sits above centre, so the foot is longest
+  const armY = top - 1.6 * bar; // a Latin cross: the bar sits above center, so the foot is longest
   const cross = union(
     rect(cx - bar / 2, bottom - 2.5 * bar, cx + bar / 2, top), // buried well inside the crown
     rect(cx - 1.5 * bar, armY - bar / 2, cx + 1.5 * bar, armY + bar / 2),
@@ -309,7 +309,7 @@ function neckMaterial(region: Region, minWidth: number): Region {
  *
  * The king needs this the way the queen needs `bridgeBalls`, and for a related reason: the
  * ball on his cross is joined by a stem that comes out at 1.07 mm on a 33 mm square, three
- * times narrower than the worst neck in any other piece, and under a millimetre as soon as
+ * times narrower than the worst neck in any other piece, and under a millimeter as soon as
  * the squares drop below 31 mm. It is a hairline in the drawing that a printer renders
  * happily and a blade does not.
  *
@@ -321,7 +321,7 @@ function thickenNecks(region: Region, minWidth: number): { region: Region; thick
   const necks = neckMaterial(region, minWidth);
   if (!necks.length) return { region, thickened: 0, grew: 0 };
   const sound = (r: Region): boolean => {
-    const a = analyseThin(r, minWidth);
+    const a = analyzeThin(r, minWidth);
     return a.necks === 0 && a.vanishing === 0;
   };
   const build = (d: number): Region => union(region, offset(necks, d));
@@ -369,7 +369,7 @@ for (const t of TYPES) {
 }
 
 /**
- * One transform for all six glyphs, from the box that encloses every piece. Normalising
+ * One transform for all six glyphs, from the box that encloses every piece. Normalizing
  * each glyph on its own would make the pawn as tall as the king; a shared box preserves
  * the relative sizes the font was drawn with. The taller of the two dimensions decides the
  * scale, so `pieceScale = 1` means "exactly as wide (or tall) as the square".
@@ -387,7 +387,7 @@ const silhouettes: Record<string, Region> = {};
 const stats: string[] = [];
 for (const t of TYPES) {
   // `clip.ts` rounds arcs to 0.02 of whatever unit it is handed, which it documents as
-  // millimetres -- but this script works in font units, where 0.02 is about 0.0007 mm and
+  // millimeters -- but this script works in font units, where 0.02 is about 0.0007 mm and
   // generates a vertex every fraction of a degree. Simplify back to the chord error the rest
   // of the app actually uses: 0.5 of a design unit is 0.014 mm at a 33 mm square, still an
   // order of magnitude finer than the machine resolves.

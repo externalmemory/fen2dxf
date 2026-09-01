@@ -1,4 +1,4 @@
-/** A point in millimetres. y is UP (DXF convention), origin at the design's bottom-left. */
+/** A point in millimeters. y is UP (DXF convention), origin at the design's bottom-left. */
 export type Pt = readonly [number, number];
 
 /** A closed ring. The closing edge is implicit: the last point is NOT repeated. */

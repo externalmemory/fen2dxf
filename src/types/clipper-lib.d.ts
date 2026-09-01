@@ -1,6 +1,6 @@
 // Minimal hand-written typings for clipper-lib (the JS port of Clipper 6.4.2), which ships
 // no types of its own. Only the surface src/core/clip.ts actually uses is declared.
-// It is a CommonJS module whose named exports are not statically analysable, so it must be
+// It is a CommonJS module whose named exports are not statically analyzable, so it must be
 // consumed as a default import -- hence `export =` over a namespace.
 declare module 'clipper-lib' {
   namespace ClipperLib {
