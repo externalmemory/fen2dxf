@@ -5,6 +5,11 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "fen2dxf",
   "compatibility_date": "2026-09-01",
+  // Publish to <name>.<account subdomain>.workers.dev. Without this the Worker deploys with
+  // no route attached and the dashboard reports "no active routes" -- it is running, there is
+  // just no URL pointing at it. Note this is NOT a *.pages.dev address: that is the Pages
+  // product, and a Worker never gets one.
+  "workers_dev": true,
   "assets": {
     "directory": "./dist"
   }

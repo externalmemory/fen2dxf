@@ -175,7 +175,14 @@ with no `main` serves the built directory from the edge.
 
 Connecting the repo, set **build command** `npm run build` and **deploy command**
 `npx wrangler deploy`. There is no output-directory field in that flow — `wrangler.jsonc` says
-`./dist`. Or deploy without connecting a repo:
+`./dist`.
+
+The result is served at `https://fen2dxf.<your-account-subdomain>.workers.dev`. It is **not** a
+`*.pages.dev` address; that belongs to the Pages product, and a Worker never gets one. If the
+dashboard reports *no active routes*, the Worker deployed fine but has no URL attached —
+`workers_dev: true` in `wrangler.jsonc` is what attaches it.
+
+Or deploy without connecting a repo:
 
 ```
 npx wrangler login
