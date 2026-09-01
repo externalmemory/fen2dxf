@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/externalmemory/fen2dxf/issues"
   },
-  "homepage": "https://github.com/externalmemory/fen2dxf#readme",
+  "homepage": "https://fen2dxf.pages.dev",
   "dependencies": {
     "clipper-lib": "^6.4.2"
   },

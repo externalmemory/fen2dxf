@@ -1,12 +1,14 @@
 # fen2dxf
 
+**<https://fen2dxf.pages.dev>**
+
 Turn a chess position into DXF cutting files for a vinyl cutter. Paste a FEN or arrange the
 pieces by hand, pick your four vinyl colours, and get four files that a Silhouette Cameo will
 cut. Built for **heat transfer vinyl**: the four sheets tile the design exactly and never
 overlap.
 
-It is a PWA: install it and it works offline, with no network access at all, next to the
-cutter.
+It is a PWA: install it from that address and it works offline afterwards, with no network
+access at all, next to the cutter.
 
 ![the app](docs/screenshot.png)
 
@@ -169,36 +171,45 @@ this draws pictures, it does not referee games.
 
 ## Deploying
 
-Cloudflare now offers static sites through **Workers with static assets** rather than Pages, so
-`wrangler.jsonc` is what the dashboard's Git flow expects. There is no Worker script: `assets`
-with no `main` serves the built directory from the edge.
+Live on **Cloudflare Pages** at <https://fen2dxf.pages.dev>, built from `main` on every push.
+Project settings:
 
-Connecting the repo, set **build command** `npm run build` and **deploy command**
-`npx wrangler deploy`. There is no output-directory field in that flow — `wrangler.jsonc` says
-`./dist`.
+| Field | Value |
+|---|---|
+| Production branch | `main` |
+| Framework preset | None |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
 
-The result is served at `https://fen2dxf.<your-account-subdomain>.workers.dev`. It is **not** a
-`*.pages.dev` address; that belongs to the Pages product, and a Worker never gets one. If the
-dashboard reports *no active routes*, the Worker deployed fine but has no URL attached —
-`workers_dev: true` in `wrangler.jsonc` is what attaches it.
+Cloudflare's dashboard now steers you into **Workers** rather than Pages, and that flow looks
+different enough to be confusing: it asks for a *deploy command* instead of an output
+directory, and a Worker is served at `<name>.<account-subdomain>.workers.dev` — never at
+`*.pages.dev`, which belongs to Pages alone. On the Create screen, pick the **Pages** section
+rather than the Workers one.
 
-Or deploy without connecting a repo:
+`wrangler.jsonc` is left in the repo so the Workers route still works if you want it. Pages
+ignores it. Note that a Pages project created from the CLI is a *Direct Upload* project and
+cannot afterwards be connected to Git, so if you want builds on push, create it from the
+dashboard:
 
 ```
 npx wrangler login
-npx wrangler pages deploy dist --project-name fen2dxf   # Pages
-npx wrangler deploy                                     # Workers
+npx wrangler pages deploy dist --project-name fen2dxf   # Pages, direct upload
+npx wrangler deploy                                     # Workers (needs workers_dev: true)
 ```
 
-Two files exist only for this:
+Two files exist only for deployment:
 
 - **`.node-version`** pins Node 22. Vite 8 needs 20.19+, and the build image picks its own
   default otherwise.
 - **`public/_headers`** caches `/assets/*` for a year — Vite fingerprints those names, so the
-  name changes whenever the bytes do — and forces revalidation of `sw.js`, `index.html` and the
-  manifest. Cache the service worker and an installed copy can never learn a new version
-  exists, so the update silently never arrives. Verified working under Workers static assets,
-  which consumes `_headers` as config rather than serving it.
+  name changes whenever the bytes do — and forces revalidation of `sw.js`, `index.html` and
+  the manifest. Cache the service worker and an installed copy can never learn that a new
+  version exists, so the update silently never arrives.
+
+Both Pages and Workers honour `_headers`, and neither serves it: confirmed against the live
+site, where `sw.js` returns `cache-control: no-cache` and a hashed asset returns
+`public, max-age=31536000, immutable`.
 
 ## Licence
 
