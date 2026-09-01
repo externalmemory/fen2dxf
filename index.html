@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#16181d" />
+    <title>fen2dxf - chess position to vinyl cutter</title>
+    <meta name="description" content="Turn a chess position into a DXF cutting file for a vinyl cutter." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>fen<span>2</span>dxf</h1>
+      <p class="tagline">Chess position &rarr; DXF for a vinyl cutter</p>
+    </header>
+
+    <main>
+      <section class="stage-pane">
+        <div id="stage" class="stage" aria-label="Cut preview">
+          <div id="svgwrap"></div>
+          <div id="grid" class="grid" role="application" aria-label="Board editor"></div>
+        </div>
+        <div id="report" class="report"></div>
+      </section>
+
+      <aside class="controls" id="controls">
+        <section class="group">
+          <h2>Position</h2>
+          <label class="field">
+            <span>FEN</span>
+            <textarea id="fen" rows="2" spellcheck="false" autocomplete="off"></textarea>
+          </label>
+          <p id="fenerr" class="err" hidden></p>
+          <div class="row">
+            <button id="btn-study" type="button">Kubbel 1922</button>
+            <button id="btn-start" type="button">Start position</button>
+            <button id="btn-clear" type="button">Clear board</button>
+            <button id="btn-flip" type="button">Flip</button>
+            <button id="btn-copyfen" type="button">Copy FEN</button>
+          </div>
+          <p class="hint">Pick a piece, then click squares to place it. Click <em>Erase</em> to remove. Any arrangement is allowed &mdash; nothing here enforces chess rules.</p>
+          <div id="palette" class="palette"></div>
+        </section>
+
+        <section class="group" id="grp-vinyl">
+          <h2>Vinyl colours</h2>
+          <p class="hint">
+            Four sheets that <strong>tile</strong> rather than stack: heat transfer vinyl bonds to
+            fabric and not to itself, so nothing overlaps anything and every piece is knocked back
+            out of the square under it. The colours are for the preview only &mdash; a DXF carries
+            none &mdash; but getting them right here is how you find out that white pieces vanish
+            on a near-white square before you buy the roll.
+          </p>
+        </section>
+        <section class="group" id="grp-board"><h2>Board</h2></section>
+        <section class="group" id="grp-cut"><h2>Cutting &amp; checks</h2></section>
+
+        <section class="group">
+          <h2>Export</h2>
+          <div id="exports" class="row stack"></div>
+          <p class="hint">
+            Four files, cut from four colours. They do not overlap, so they can be pressed in any
+            order. Every one carries the same weeding box, so lining those rectangles up lines up
+            everything inside them.
+            DXF is written as R12 polylines in millimetres, the dialect Silhouette Studio is
+            known to import. Cut the calibration square once to confirm the scale.
+          </p>
+        </section>
+
+        <section class="group credits">
+          <h2>Credits</h2>
+          <p>
+            Pieces are the solid glyphs of the <strong>Chess</strong> font by
+            <a href="https://www.1001fonts.com/chess-font.html" rel="noopener" target="_blank">James&nbsp;Kilfiger</a>,
+            dedicated by its author to the public domain. Nothing you export from here is
+            encumbered. Application code is MIT.
+          </p>
+          <p>
+            Default position: <strong>Leonid Kubbel</strong>, <em>Schachmatny Listok</em> 1922.
+            White to move and win.
+          </p>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="/src/ui/main.ts"></script>
+  </body>
+</html>

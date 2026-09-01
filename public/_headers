@@ -1,0 +1,19 @@
+# Cloudflare Pages reads this from the root of the build output. Vite copies public/ there.
+
+# Vite fingerprints these, so the name changes whenever the bytes do.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Everything the browser uses to DISCOVER a new version has to be revalidated. Cache the
+# service worker and an installed copy of the app can never learn that a new one exists --
+# which for an offline-first PWA means the update silently never arrives.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/registerSW.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
