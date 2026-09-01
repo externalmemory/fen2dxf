@@ -12,7 +12,7 @@ access at all, next to the cutter.
 
 ![the app](docs/screenshot.png)
 
-## Four sheets, not one
+## Four Sheets
 
 DXF has no fills. A cutter cuts closed contours and you weed away what you do not want, so the
 whole job is deciding which polygons to emit, and the first decision is how many colors you
@@ -29,7 +29,7 @@ Four sheets remove the problem instead: light squares, dark squares, white piece
 pieces, every shape solid, and a piece told from its square by the color of the vinyl it was
 cut from rather than by a gap.
 
-## They tile, they do not stack
+## No Stacking
 
 **Heat transfer vinyl bonds to fabric, not to itself.** Anything laid over another sheet simply
 does not stick, so there is no free overlap to hide registration error in. Every square
@@ -66,7 +66,7 @@ four sheets sharing one exact rectangle is the entire registration scheme: line 
 up and everything inside them lines up too. Nothing overlaps, so they can be pressed in any
 order.
 
-## What is still hard
+## Limitations
 
 **Squares of one color touch only at corners**, which is zero width and cuts apart into 32
 loose tiles. Shrinking them by `inset` (**grout**, the default) makes the *other* color a
@@ -119,7 +119,7 @@ asserted at three insets.
 tears while being weeded rather than failing loudly at cut time. Every sheet is checked
 separately and the preview highlights what is delicate.
 
-## The minimum-feature check
+## The Minimum-Feature Check
 
 Erode the design by half the minimum feature width. Anything narrower is pinched through, so
 counting the pieces each decal is left in answers the only question that matters:
@@ -149,7 +149,7 @@ four colors exist only in the preview and the filenames. There is an R2000 / `LW
 toggle if you want it, and a one-click 100 mm calibration square so you can confirm the import
 scale once and stop thinking about it.
 
-## Using it
+## Using It
 
 ```
 npm install

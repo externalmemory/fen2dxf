@@ -1,9 +1,9 @@
-# Design notes
+# Design Notes
 
 What the code does and why, including the things that only became apparent once it ran.
 `README.md` covers the user-facing side; this is the record of the decisions.
 
-## Shape of the program
+## Shape of the Program
 
 One geometry pipeline, two renderers. The SVG preview and the DXF writer consume the same
 `Region`, so the preview *is* the cut file rather than a second drawing of it that can drift.
@@ -28,7 +28,7 @@ scripts/
 `Region.length` is the number of separate decals the carrier sheet has to carry, which is why the
 representation keeps components explicit instead of flattening to a soup of contours.
 
-## Why four sheets
+## Why Four Sheets
 
 The one-sheet design had a structural flaw that no amount of tuning fixes. Writing C for the
 vinyl being cut and S for the surface behind it, a piece on a square is one of four cases, and
@@ -40,7 +40,7 @@ C-piece did not vanish into a C-square, a scrap filter for the flecks the gap de
 thickness that had to be kept above the minimum feature width. All of it is gone. With four
 colors every shape is solid.
 
-## The sheets tile, they do not stack
+## No Stacking
 
 The first four-sheet version stacked: a solid light rectangle under everything, the dark sheet's
 grout lattice reaching into every light square, pieces simply laid on top. Overlap was the
@@ -82,7 +82,7 @@ the sheets can be pressed in any order.
 A test intersects all six pairs of sheets and asserts zero shared area, because everything else
 rests on that property.
 
-## Why the tile sheet stays 32 loose tiles
+## Why the Tiles Stay Loose
 
 With no overlap, only one square sheet can be the continuous ground; the other gets what is
 left, which is 32 separate tiles. Bridging them diagonally makes that one decal, and it was
@@ -105,7 +105,7 @@ option because adhesive vinyl does have it: the same users who want a negative `
 
 A test probes a disc at each of the 49 interior vertices and asserts the ground owns every one.
 
-## When interlock is used, the bridges must form a tree
+## Bridges Must Form a Tree
 
 Bridging works only if the bridges form a **spanning tree**: 31 of the 49 interior vertices.
 
@@ -134,7 +134,7 @@ which 36 are the light tiles and most of the rest are pieces: these glyphs are d
 solids, so a pawn is a disc, a mound and a base arc. The report bar breaks the count down per
 sheet so the number is never a surprise.
 
-## Library choices
+## Library Choices
 
 **`clipper-lib`** (pure JS Clipper 6) behind a one-file adapter. Offsetting is not optional (grout,
 blade compensation, glyph repair and the whole minimum-feature check are all offsets), which
@@ -151,7 +151,7 @@ dark-squared bishops. A 60-line parser with no rules is the correct dependency.
 Integer scale is 1e4 (0.1 um). Design coordinates stay under ~310 mm, so integers stay under
 3.1e6, far inside Clipper's safe range and far finer than any drag knife resolves.
 
-## Deriving the silhouettes
+## Deriving the Silhouettes
 
 The **Chess** font by James Kilfiger, public domain by its own copyright string. It draws each
 piece twice: `P N B R Q K` are outline forms and `p n b r q k` are solid. **Only the solid forms
@@ -163,7 +163,7 @@ All six glyphs share one transform, computed from the box that encloses every pi
 (102..898 x 0..760 font units), so their relative sizes are the ones the font was drawn with.
 Normalizing each glyph on its own would make the pawn as tall as the king.
 
-### Four changes, all in `build-glyphs.ts`
+### Four Changes in `build-glyphs.ts`
 
 **The queen's crown balls** are four free-standing circles clearing the spike tips by about 27
 font units. A printed diagram bridges that gap with the outline stroke; a filled silhouette does
@@ -234,7 +234,7 @@ The king is still the binding constraint, but he reaches 1 mm at a 12.8 mm squar
 30.8 mm for the unrepaired stem, and 18.2 mm for the thickened one. Comfortably outside the
 useful range in every case, and at the shipped defaults no piece raises a flag of any kind.
 
-### The hole-winding bug
+### The Hole-Winding Bug
 
 Font contours are resolved by a non-zero fill rule, and `union` cannot do that: it takes `Poly`
 values, where nesting is already decided, and forces every outer counter-clockwise. Handing it a
@@ -242,7 +242,7 @@ glyph's contours as separate one-ring components reverses the holes and fills th
 symptom was silent and specific: the king lost both eyes and the knight lost his. `clip.ts`
 grew `fromRings` for anything that starts life as raw contours.
 
-## Tuning, and what the numbers turned out to be
+## Tuning
 
 **Grout narrows to `2*sqrt(2)*inset`.** Two diagonally adjacent holes each stop `inset` short of
 the shared corner in both axes, so the material between them measures `2*sqrt(2)*inset` across;
@@ -264,7 +264,7 @@ honest but leaves nothing of the square around it once the knockout has taken it
 where the grout has already taken 0.6 mm. Push the scale much past 0.9 and the checker starts
 reporting severed tiles, which is the correct answer rather than a limit worth hard-coding.
 
-## The bug worth remembering
+## The Bug Worth Remembering
 
 The minimum-feature check originally used a morphological opening with **miterd** joins, chosen
 so that square corners came back exactly instead of being reported as defects. But erode-then-

@@ -1,4 +1,4 @@
-# Piece artwork
+# Piece Artwork
 
 `chess.otf` is the **Chess** font by **James Kilfiger**, version 1.1, built with FontForge
 in 2010 and distributed at <https://www.1001fonts.com/chess-font.html>.
@@ -13,7 +13,7 @@ artwork, the Cburnett SVGs, which are CC BY-SA 3.0: a share-alike license propag
 every DXF the app writes, which is a strange thing to hand somebody who just wanted to cut a
 chessboard.
 
-## What is used, and what is not
+## What Is Used
 
 The font draws each piece twice. `P N B R Q K` are outline forms, for white pieces on a
 printed diagram; `p n b r q k` are solid forms, for black. **Only the solid forms are used.**

@@ -1,7 +1,7 @@
 /**
  * Turn a position plus settings into the four sheets that get cut.
  *
- * Why four
+ * Why Four
  * --------
  * A one-sheet build has to distinguish four things with two colors, and one of the four
  * combinations has nowhere to go: a piece the same color as the square it stands on can only
@@ -15,8 +15,8 @@
  *   white   every white piece, solid
  *   black   every black piece, solid
  *
- * The four sheets TILE, they do not stack
- * ---------------------------------------
+ * No Stacking
+ * -----------
  * Heat transfer vinyl bonds to fabric and not to itself, so anything laid over another sheet
  * simply does not stick. There is no free overlap to hide registration error in, and every
  * square millimeter of the design belongs to exactly one sheet:
@@ -185,8 +185,8 @@ export function dropScraps(region: Region, minArea: number, minHoleArea: number)
  * The squares that are NOT the ground: the sheet that has to make do with what the ground
  * leaves it. Under `grout` that is 32 separate tiles.
  *
- * Why 32 loose tiles is the default, and interlock is not
- * ------------------------------------------------------
+ * Why the Tiles Stay Loose
+ * ------------------------
  * `interlock` bridges the tiles diagonally so they come off as a single decal instead, which
  * sounds strictly better and is not. Two squares of one color meet at a corner at exactly
  * zero width, so ANY connector between them of any positive width has to intrude into the

@@ -14,7 +14,7 @@ export default defineConfig({
       // as well. That is harmless -- both paths hash the same bytes, so the revisions always
       // agree and Workbox drops the duplicate rather than raising a conflict.)
       manifest: {
-        name: 'fen2dxf - chess position to vinyl cutter',
+        name: 'fen2dxf - Chess Position to Vinyl Cutter',
         short_name: 'fen2dxf',
         description: 'Turn a chess position into a DXF cutting file for a vinyl cutter.',
         theme_color: '#16181d',

@@ -12,14 +12,16 @@
  * apart by the color of the sheet they are cut from, which is the entire point of a
  * four-layer build.
  *
- * The one repair
- * --------------
- * In the solid queen the four crown balls are drawn as free-standing circles that clear the
- * spike tips by about 27 units, roughly a millimeter once a square is 33 mm. On a printed
- * diagram the outline stroke bridges that gap; in a filled silhouette nothing does, so the
- * balls come out as four loose discs to be tweezered into place. `bridgeBalls` widens each
- * spike into a tapered stem that meets its ball, which is both what the drawing means and
- * what makes the crown one weedable decal.
+ * The Changes
+ * -----------
+ * Four of them, and each function below carries its own reasoning. `bridgeBalls` welds the
+ * queen's four crown balls to their spikes: the font draws them as free-standing circles
+ * clearing the tips by about 27 units, which a filled silhouette cuts as four loose discs.
+ * `thickenNecks` widens the stem under the king's finial, which comes out at 1.07 mm on a
+ * 33 mm square and would tear. `crossTheKing` replaces his orb with a cross, which is a
+ * preference rather than a repair. Last, every sharp outside corner gets a small radius,
+ * because a drag knife swivels through a reversal and would otherwise impose one of its
+ * own, unpredictably.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import opentype, { type Font } from 'opentype.js';
