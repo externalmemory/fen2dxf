@@ -1,9 +1,11 @@
 /**
  * DXF writer.
  *
- * The dialect here is not a guess: it is copied from `dragon.dxf`, a file already known to
- * import correctly into Silhouette Studio for the Cameo 5 Alpha. Deviating from it is the
- * fastest way to break the one thing that is known to work, so:
+ * The dialect here is not a guess: it was copied group code by group code from a file already
+ * known to import correctly into Silhouette Studio for the Cameo 5 Alpha, and the output was
+ * checked back against that file byte for byte through the header, the tables and the first
+ * entity. That reference is no longer in the repo, so treat the list below as the record of
+ * what it said. Deviating from it is the fastest way to break the one thing known to work:
  *
  *   - R12 (AC1009), but with $INSUNITS=4 (mm) and $MEASUREMENT=1 written anyway. Those
  *     header variables post-date R12; Studio reads them, older parsers skip them.
